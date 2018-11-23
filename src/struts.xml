@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+	
+	<package name="action" extends="struts-default" namespace="/main">
+		<global-results>
+			<result name="input">/index.jsp</result>
+		</global-results>
+		
+		<!-- 图书action -->	
+		<action name="book_*" class="bookAction" method="{1}">
+			<result name="hot.jsp">/main/hot.jsp</result>
+			<result name="new.jsp">/main/new.jsp</result>
+			<result name="recommend.jsp">/main/recommend.jsp</result>
+			<result name="hotBoard.jsp">/main/hotBoard.jsp</result>
+			<result name="book_list.jsp">/main/book_list.jsp</result>
+			<result name="product.jsp">/main/product.jsp</result>
+		</action>
+		
+		
+		<!-- 图书类别action -->
+		<action name="category_*" class="categoryAction" method="{1}">
+			<result name="category.jsp">/main/category.jsp</result>
+		</action>
+		
+		
+		<!-- 用户action -->
+		<action name="users_*" class="usersAction" method="{1}">
+			<result name="login_form.jsp">/user/login_form.jsp</result>
+			<result name="main.jsp">/main/main.jsp</result>
+			<result name="select" type="redirectAction">address_select</result>
+			<result name="order_selectAll" type="redirectAction">order_selectAll</result>
+			<result name="verify_form.jsp" >/user/verify_form.jsp</result>
+			<result name="register_ok.jsp">/user/register_ok.jsp</result>
+			
+			<result name="register_form.jsp">/user/register_form.jsp</result>
+			<result name="selectShopping" type="redirectAction">shoppingCart_selectShopping</result>
+			<result name="shoppingCare_add" type="redirectAction">shoppingCart_add?bid=${bid}</result>
+			
+		</action>
+		
+		<!-- 地址action -->
+		<action name="address_*" class="addressAction" method="{1}">
+			<result name="my_address.jsp">/address/my_address.jsp</result>
+			<result name="login_form.jsp">/user/login_form.jsp</result>
+			<result name="address_form.jsp">/order/address_form.jsp</result>
+			<result name="select" type="redirectAction">address_select</result>
+		</action>
+		
+		<!-- 购物车action -->
+		<action name="shoppingCart_*" class="shoppingCartAction" method="{1}">
+			<result name="cart_list.jsp">/cart/cart_list.jsp</result>
+			<result name="selectShopping" type="redirectAction">shoppingCart_selectShopping</result>
+			<result name="login_form.jsp">/user/login_form.jsp</result>
+			<result name="order_info.jsp">/order/order_info.jsp</result>
+		</action>
+		
+		<!-- 订单action -->
+		<action name="order_*" class="orderAction" method="{1}">
+			<result name="order_ok.jsp">/order/order_ok.jsp</result>
+			<result name="pay_ok.jsp" type="redirect">/order/pay_ok.jsp</result>
+			<result name="login_form.jsp">/user/login_form.jsp</result>
+			<result name="my_order.jsp">/order/my_order.jsp</result>
+			<result name="selectAll" type="redirectAction">order_selectAll</result>
+		</action>
+	</package>
+	
+</struts>

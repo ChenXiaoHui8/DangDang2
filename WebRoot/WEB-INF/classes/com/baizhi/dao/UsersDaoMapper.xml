@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper是dao接口的全限定名 -->
+<mapper namespace="com.baizhi.dao.UsersDao">
+	<resultMap type="com.baizhi.entity.Users" id="usermap">
+		<id column="user_id" property="uid"/>
+		<result column="user_name" property="uname"/>
+		<result column="email" property="email"/>
+		<result column="user_password" property="upassword"/>
+		<result column="user_status" property="ustatus"/>
+	</resultMap>
+	<select id="login" resultMap="usermap">
+		select * from d_users where email = #{email} and user_password = #{upassword} and user_status = '激活'
+	</select>
+	<update id="update">
+		update d_users set user_status = '激活' where email = #{email}
+	</update>
+	<insert id="regist">
+		insert into d_users values(use_seq.nextval,#{uname},#{email},#{upassword},'未激活')
+	</insert>
+</mapper>

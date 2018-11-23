@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xmlns:aop="http://www.springframework.org/schema/aop"
+		xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+			">
+	<!-- 
+	1.加载db.properties
+	2.创建数据源：bean标签
+	3.通过bean标签，创建sqlSession工厂对象====>
+		在mybatis对spring支持的jar中有一个类:SqlSessionFactoryBean
+		a.需要依赖数据源
+		b.必须加载映射文件
+	4.创建dao代理对象：只需要把dao接口交给spring就可以啦
+	5.写dao接口以及映射文件
+	6.写service接口以及实现（交给spring管理）
+	7.声明式事务处理
+		a.事务管理器
+		b.事务增强：指定事务规则
+		c.定义切入点
+		d.做编织处理
+	 -->
+	 <!-- 1. -->
+	 <context:property-placeholder location="classpath:db.properties"/>
+	 <context:component-scan base-package="com.baizhi"></context:component-scan>
+	 <!-- 2. -->
+	 <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+	 	<property name="driverClassName" value="${jdbc.driver}"></property>
+	 	<property name="url" value="${jdbc.url}"></property>
+	 	<property name="username" value="${jdbc.username}"></property>
+	 	<property name="password" value="${jdbc.password}"></property>
+	 </bean>
+	 
+	 
+	 <!-- 3. -->
+	 <bean class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="mapperLocations">
+			<list>
+				<value>classpath:com/baizhi/dao/*Mapper.xml</value>
+			</list>
+		</property>
+		<property name="typeAliasesPackage" value="com.baizhi.entity"></property>
+	</bean>
+	 
+	 <!-- 4. -->
+	 <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	 	<property name="basePackage" value="com.baizhi.dao"></property>
+	 </bean>
+	 
+	 <!-- spring的声明式事务处理 -->
+	 <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="txManager">
+	 	<property name="dataSource" ref="dataSource"></property>
+	 </bean>
+	 
+	 <tx:advice id="txAdvice" transaction-manager="txManager">
+	 	<tx:attributes>
+	 		<tx:method name="get*" read-only="true"/>
+	 		<tx:method name="set*" read-only="true"/>
+	 		<tx:method name="*" propagation="REQUIRED"/>
+	 	</tx:attributes>
+	 </tx:advice>
+	 
+	 
+	 <aop:config>
+	 	<aop:pointcut expression="execution(* com.baizhi.service.*.*(..))" id="servicePointcut"/>
+	 	<aop:advisor advice-ref="txAdvice" pointcut-ref="servicePointcut"/>
+	 </aop:config>
+	 
+	 <!-- 验证码 -->
+	 <!-- <bean id="config" class="com.google.code.kaptcha.util.Config">
+	 	<constructor-arg>
+	 		<props>
+	 			<prop key="kaptcha.textproducer.char.length">4</prop>
+	 		
+	 		</props>
+	 	</constructor-arg>
+	 </bean> -->
+	 <!-- <bean class="com.google.code.kaptcha.impl.DefaultKaptcha" >
+	 	<property name="config" ref="config"></property>
+	 </bean> -->
+</beans>
+
+
+
+

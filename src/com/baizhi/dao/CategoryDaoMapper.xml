@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper是dao接口的全限定名 -->
+<mapper namespace="com.baizhi.dao.CategoryDao">
+	<resultMap type="com.baizhi.entity.Category" id="map">
+		<id column="cid" property="cid"/>
+		<result column="cname" property="cname"/>
+		<collection property="categoryList" ofType="com.baizhi.entity.Category">
+			<id column="category_id" property="cid"/>
+			<result column="category_name" property="cname"/>
+			<result column="parent_id" property="pid"/>
+			<result column="length" property="length"/>
+		</collection>
+	</resultMap>
+	<select id="selectAll" resultMap="map">
+		select d.category_id cid, d.category_name cname, c.*
+  		from (select category_id, category_name, parent_id, count(book_id) length
+          from d_category a
+          left join d_book b
+            on a.category_id = b.cid
+         group by category_id, category_name, parent_id) c
+ 		inner join d_category d
+   		 on c.parent_id = d.category_id 
+	</select>
+	<select id="select" resultMap="map">
+		select d.category_id cid, d.category_name cname, c.*
+  		from (select category_id, category_name, parent_id, count(book_id) length
+          from d_category a
+          left join d_book b
+            on a.category_id = b.cid
+         group by category_id, category_name, parent_id) c
+ 		inner join d_category d
+   		 on c.parent_id = d.category_id 
+   		 where d.category_id=#{cid}
+	</select>
+	<select id="selectPid" resultType="int">
+		select parent_id from d_category where category_id = #{cid}
+	</select>
+</mapper>

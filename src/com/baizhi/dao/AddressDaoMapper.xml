@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper是dao接口的全限定名 -->
+<mapper namespace="com.baizhi.dao.AddressDao">
+	<resultMap type="com.baizhi.entity.Address" id="addressmap">
+		<id column="address_id" property="aid"/>
+		<result column="consignee_name" property="aname"/>
+		<result column="consignee_address" property="address"/>
+		<result column="phone" property="phone"/>
+		<result column="u_id" property="uid"/>
+		<result column="delete_status" property="delectStatus"/>
+		<result column="default_status" property="defaultStatus"/>
+	</resultMap>
+	<select id="select" resultMap="addressmap">
+		select * from d_address where delete_status = 0 and u_id = #{uid} order by default_status desc
+	</select>
+	<insert id="add">
+		insert into d_address values(add_seq.nextval,#{aname},#{address},#{phone},#{uid},0,0)
+	</insert>
+	<update id="updateDefault">
+		update d_address set default_status = 1 where address_id=#{aid}
+	</update>
+	<update id="updateNotDefault">
+		update d_address set default_status = 0 where u_id = #{uid} and default_status = 1
+	</update>
+	<update id="updateDeleteStatus">
+		update d_address set delete_status = 1 where address_id=#{aid}
+	</update>
+</mapper>

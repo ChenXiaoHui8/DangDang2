@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper是dao接口的全限定名 -->
+<mapper namespace="com.baizhi.dao.ShoppingCartDao">
+	<resultMap type="com.baizhi.entity.ShoppingCart" id="shoppingcartmap">
+		<id column="shoppingcart_id" property="sid"/>
+		<result column="u_id" property="uid"/>
+		<result column="bid" property="bid"/>
+		<result column="shoppingcart_status" property="status"/>
+		<result column="shoppingcart_number" property="number"/>
+		<association property="book" javaType="com.baizhi.entity.Book">
+			<id column="book_id" property="bid"/>
+			<result column="cid" property="cid"/>
+			
+			<result column="book_name" property="bname"/>
+			<result column="book_price" property="bprice"/>
+			<result column="groundingDate" property="time"/>
+			<result column="inventory" property="inventory"/>
+			<result column="author" property="author"/>
+			<result column="salenum" property="salenum"/>
+			<result column="messages" property="messages"/>
+			<result column="Dangprice" property="dprice"/>
+			<result column="product_image" property="bimg"/>
+		</association>
+	</resultMap>
+	
+	<select id="selectShoppingCart" resultMap="shoppingcartmap">
+		select *
+		  from d_shoppingcart s
+		  left join d_book b
+		    on s.bid = b.book_id
+		 where u_id = #{uid}
+		   and shoppingcart_status = #{statusId}
+	</select>
+	<delete id="deleteAll">
+		delete from d_shoppingcart where u_id=#{uid}
+	</delete>
+	<select id="selectOne" resultMap="shoppingcartmap">
+		select *
+		  from d_shoppingcart s
+		  left join d_book b
+		    on s.bid = b.book_id
+		 where u_id = #{uid}
+		   and bid = #{bid}
+	</select>
+	<update id="updateNum">
+		update d_shoppingcart set shoppingcart_number=#{number},shoppingcart_status=0 where u_id=#{uid} and bid=#{bid}
+	</update>
+	<delete id="delete">
+		delete from d_shoppingcart where u_id=#{uid} and bid=#{bid}
+	</delete>
+	<insert id="add">
+	
+		insert into d_shoppingcart values(cart_seq.nextval,#{uid},#{bid},0,1)
+	</insert>
+	
+	<update id="updateStatusDelete">
+		update d_shoppingcart set shoppingcart_status = 1 where u_id=#{uid} and bid =#{bid}
+	</update>
+	
+	<update id="updateStatusRecover">
+		update d_shoppingcart set shoppingcart_status = 0 where u_id=#{uid} and bid =#{bid}
+	</update>
+</mapper>

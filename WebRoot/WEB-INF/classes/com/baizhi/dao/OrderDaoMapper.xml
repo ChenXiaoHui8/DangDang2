@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper是dao接口的全限定名 -->
+<mapper namespace="com.baizhi.dao.OrderDao">
+	<resultMap type="com.baizhi.entity.Order" id="ordermap">
+		<result column="address_id" property="aid"/>
+		<result column="totalprice" property="totalPrice"/>
+		<result column="pay_status" property="orderStatus"/>
+		<result column="order_number" property="orderNumber"/>
+		<result column="order_date" property="date"/>
+		<collection property="scList" ofType="com.baizhi.entity.ShoppingCart">
+			<result column="u_id" property="uid"/>
+			<result column="book_id" property="bid"/>
+			<result column="product_number" property="number"/>
+			<association property="book" javaType="com.baizhi.entity.Book">
+				<id column="book_id" property="bid"/>
+				<result column="cid" property="cid"/>
+				<result column="book_name" property="bname"/>
+				<result column="book_price" property="bprice"/>
+				<result column="groundingDate" property="time"/>
+				<result column="inventory" property="inventory"/>
+				<result column="author" property="author"/>
+				<result column="salenum" property="salenum"/>
+				<result column="messages" property="messages"/>
+				<result column="Dangprice" property="dprice"/>
+				<result column="product_image" property="bimg"/>
+			</association>
+		</collection>
+	</resultMap>
+	<select id="selectAll" resultMap="ordermap">
+		select * from d_order o left join d_book b 
+		on o.book_id = b.book_id where u_id=#{uid}
+	</select>
+	<insert id="add">
+		insert into d_order values(order_seq.nextval,#{sc.uid},#{order.aid},#{sc.bid},#{order.orderNumber},#{sc.number}
+		,#{order.date},'未支付' , #{order.totalPrice})
+	</insert>
+	<update id="updateStatus">
+		update d_order set pay_status = '已支付' where order_number = #{id}
+	</update>
+	<delete id="deleteMany">
+		delete from d_order where order_number in
+		<foreach collection="array" open="(" close=")" item="id" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+</mapper>
